@@ -3,16 +3,8 @@
   "WorkspaceRootPath": "D:\\UnityProject\\DistributedAuctionSim\\DistributedAuctionSim\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{37CB69F8-C5B8-AB3D-5698-4CB31EF40A56}|Assembly-CSharp.csproj|d:\\unityproject\\distributedauctionsim\\distributedauctionsim\\assets\\scripts\\core\\experimentlogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{37CB69F8-C5B8-AB3D-5698-4CB31EF40A56}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\core\\experimentlogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{37CB69F8-C5B8-AB3D-5698-4CB31EF40A56}|Assembly-CSharp.csproj|D:\\UnityProject\\DistributedAuctionSim\\DistributedAuctionSim\\assets\\scripts\\agents\\agentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{37CB69F8-C5B8-AB3D-5698-4CB31EF40A56}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\agents\\agentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{37CB69F8-C5B8-AB3D-5698-4CB31EF40A56}|Assembly-CSharp.csproj|d:\\unityproject\\distributedauctionsim\\distributedauctionsim\\assets\\scripts\\core\\gamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{37CB69F8-C5B8-AB3D-5698-4CB31EF40A56}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\core\\gamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\UnityProject\\DistributedAuctionSim\\DistributedAuctionSim\\Assets\\Scripts\\Tasks\\TaskPoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\Tasks\\TaskPoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -27,40 +19,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "ExperimentLogger.cs",
-              "DocumentMoniker": "D:\\UnityProject\\DistributedAuctionSim\\DistributedAuctionSim\\Assets\\Scripts\\Core\\ExperimentLogger.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Core\\ExperimentLogger.cs",
-              "ToolTip": "D:\\UnityProject\\DistributedAuctionSim\\DistributedAuctionSim\\Assets\\Scripts\\Core\\ExperimentLogger.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Core\\ExperimentLogger.cs",
-              "ViewState": "AgIAAOYAAAAAAAAAAAASwPMAAAAxAAAAAAAAAA==",
+              "Title": "TaskPoint.cs",
+              "DocumentMoniker": "D:\\UnityProject\\DistributedAuctionSim\\DistributedAuctionSim\\Assets\\Scripts\\Tasks\\TaskPoint.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Tasks\\TaskPoint.cs",
+              "ToolTip": "D:\\UnityProject\\DistributedAuctionSim\\DistributedAuctionSim\\Assets\\Scripts\\Tasks\\TaskPoint.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Tasks\\TaskPoint.cs",
+              "ViewState": "AgIAAAICAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-10T17:16:41.125Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "GameManager.cs",
-              "DocumentMoniker": "D:\\UnityProject\\DistributedAuctionSim\\DistributedAuctionSim\\Assets\\Scripts\\Core\\GameManager.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Core\\GameManager.cs",
-              "ToolTip": "D:\\UnityProject\\DistributedAuctionSim\\DistributedAuctionSim\\Assets\\Scripts\\Core\\GameManager.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Core\\GameManager.cs",
-              "ViewState": "AgIAAN0EAAAAAAAAAAAcwPYEAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-10T16:59:08.068Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "AgentController.cs",
-              "DocumentMoniker": "D:\\UnityProject\\DistributedAuctionSim\\DistributedAuctionSim\\Assets\\Scripts\\Agents\\AgentController.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Agents\\AgentController.cs",
-              "ToolTip": "D:\\UnityProject\\DistributedAuctionSim\\DistributedAuctionSim\\Assets\\Scripts\\Agents\\AgentController.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Agents\\AgentController.cs",
-              "ViewState": "AgIAAIkBAAAAAAAAAAAcwKIBAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-10T16:59:08.074Z",
+              "WhenOpened": "2026-03-11T12:49:45.157Z",
               "EditorCaption": ""
             }
           ]
