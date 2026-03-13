@@ -148,7 +148,15 @@ public class TaskPoint : MonoBehaviour
         lastConfirmedByAgentId = -1;
         consensusLocked = false;
 
-        proposalTime = Time.time;
+        if (proposalTime < 0f)
+        {
+            proposalTime = Time.time;
+        }
+        else
+        {
+            proposalTime = Time.time;
+        }
+
         currentState = TaskState.Confirming;
 
         UpdateColor();
@@ -247,6 +255,7 @@ public class TaskPoint : MonoBehaviour
         confirmedWinnerId = -1;
         confirmCount = 0;
         consensusStartTime = -1f;
+        lastConfirmedByAgentId = -1;
 
         if (!isAssigned)
         {
@@ -489,7 +498,11 @@ public class TaskPoint : MonoBehaviour
 
     private void UpdateColor()
     {
-        if (rend == null) return;
+        if (rend == null)
+        {
+            rend = GetComponent<Renderer>();
+            if (rend == null) return;
+        }
 
         switch (currentState)
         {

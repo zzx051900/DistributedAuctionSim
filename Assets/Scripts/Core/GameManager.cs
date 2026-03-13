@@ -2,6 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ExperimentType
+{
+    BASELINE,
+    WEAK_NETWORK,
+    FAILURE_RECOVERY,
+    CUSTOM
+}
+
 public class GameManager : MonoBehaviour
 {
     [Header("Agents")]
@@ -10,7 +18,6 @@ public class GameManager : MonoBehaviour
     [Header("Task Settings")]
     public GameObject taskPrefab;
     public int taskCount = 3;
-
     public float minX = -4f;
     public float maxX = 4f;
     public float minZ = 2f;
@@ -40,6 +47,11 @@ public class GameManager : MonoBehaviour
     public bool enableAgentDisconnection = false;
     public float disconnectionDuration = 3f;
 
+    [Header("Experiment Metadata")]
+    public ExperimentType experimentType = ExperimentType.BASELINE;
+    [TextArea(2, 4)]
+    public string experimentNote = "Default baseline run";
+
     [Header("Experiment Runner")]
     public ExperimentRunner experimentRunner;
     public int currentRunId = 0;
@@ -61,6 +73,7 @@ public class GameManager : MonoBehaviour
     public int completedTaskCount = 0;
     public int totalAssignmentCount = 0;
     public int failedAgentCount = 0;
+    public int disconnectedEventCount = 0;
 
     [Header("Consensus Statistics")]
     public int totalConsensusSuccess = 0;
@@ -129,8 +142,18 @@ public class GameManager : MonoBehaviour
         currentRunId = runId;
 
         Debug.Log($"GameManager: StartSingleExperiment Run {currentRunId}");
+        Debug.Log($"Experiment Type: {experimentType}");
+        Debug.Log($"Experiment Note: {experimentNote}");
 
         ResetExperimentState();
+
+
+        FailureInjectionExperiment injector = FindObjectOfType<FailureInjectionExperiment>();
+        if (injector != null)
+        {
+            injector.ResetInjectionState();
+        }
+
 
         if (ExperimentLogger.Instance != null)
         {
@@ -149,6 +172,15 @@ public class GameManager : MonoBehaviour
 
     public void ResetExperimentState()
     {
+        ClearAllSceneTasks();
+        ResetRuntimeCollections();
+        ResetStatistics();
+        ResetRuntimeFlags();
+        ResetAgents();
+    }
+
+    void ClearAllSceneTasks()
+    {
         TaskPoint[] oldTasks = FindObjectsOfType<TaskPoint>();
         foreach (TaskPoint oldTask in oldTasks)
         {
@@ -159,19 +191,28 @@ public class GameManager : MonoBehaviour
         }
 
         tasks.Clear();
+    }
+
+    void ResetRuntimeCollections()
+    {
         delayedActions.Clear();
         tasksWithScheduledConsensus.Clear();
 
         auctionHistory.Clear();
         latestBids.Clear();
+
         auctionInfo = "";
         currentAuctionTaskId = -1;
         currentWinnerAgentId = -1;
+    }
 
+    void ResetStatistics()
+    {
         totalTaskCount = 0;
         completedTaskCount = 0;
         totalAssignmentCount = 0;
         failedAgentCount = 0;
+        disconnectedEventCount = 0;
 
         totalConsensusSuccess = 0;
         totalConsensusFail = 0;
@@ -187,7 +228,10 @@ public class GameManager : MonoBehaviour
         tasksNeedingReassignment = 0;
         successfulReassignments = 0;
         failedReassignments = 0;
+    }
 
+    void ResetRuntimeFlags()
+    {
         startTime = 0f;
         endTime = 0f;
         allTasksFinished = false;
@@ -195,15 +239,17 @@ public class GameManager : MonoBehaviour
         currentTriggerReason = "NORMAL";
         isAuctionRunning = false;
         globalAuctionRound = 0;
+    }
 
-        if (agents != null)
+    void ResetAgents()
+    {
+        if (agents == null) return;
+
+        foreach (AgentController agent in agents)
         {
-            foreach (AgentController agent in agents)
+            if (agent != null)
             {
-                if (agent != null)
-                {
-                    agent.ResetAgentState();
-                }
+                agent.ResetAgentState();
             }
         }
     }
@@ -213,24 +259,8 @@ public class GameManager : MonoBehaviour
     // =========================
     void GenerateTasks()
     {
-        TaskPoint[] oldTasks = FindObjectsOfType<TaskPoint>();
-        foreach (TaskPoint oldTask in oldTasks)
-        {
-            if (oldTask != null)
-            {
-                Destroy(oldTask.gameObject);
-            }
-        }
-
-        tasks.Clear();
-        delayedActions.Clear();
-        tasksWithScheduledConsensus.Clear();
-
-        auctionHistory.Clear();
-        latestBids.Clear();
-        auctionInfo = "";
-        currentAuctionTaskId = -1;
-        currentWinnerAgentId = -1;
+        ClearAllSceneTasks();
+        ResetRuntimeCollections();
 
         for (int i = 0; i < taskCount; i++)
         {
@@ -785,7 +815,6 @@ public class GameManager : MonoBehaviour
         {
             if (task == null)
             {
-                ClearConsensusScheduleForTask(task);
                 yield break;
             }
 
@@ -842,7 +871,7 @@ public class GameManager : MonoBehaviour
                 yield break;
             }
 
-            // 2. 候选赢家暂时断连：不立即判失败，等待超时或恢复
+            // 2. 候选赢家暂时断连
             if (proposedAgent.isDisconnected)
             {
                 auctionInfo =
@@ -1047,12 +1076,16 @@ public class GameManager : MonoBehaviour
 
             Debug.Log("All tasks completed.");
             Debug.Log($"Run ID: {currentRunId}");
+            Debug.Log($"Experiment Type: {experimentType}");
+            Debug.Log($"Experiment Note: {experimentNote}");
             Debug.Log($"Total completion time: {GetTotalCompletionTime():F2} s");
             Debug.Log($"Completion rate: {GetCompletionRate() * 100f:F2}%");
             Debug.Log($"Fairness index: {GetFairnessIndex():F3}");
             Debug.Log($"Consensus success: {totalConsensusSuccess}");
             Debug.Log($"Consensus fail: {totalConsensusFail}");
             Debug.Log($"Reauction count: {totalReauctionCount}");
+            Debug.Log($"Failed agents: {failedAgentCount}");
+            Debug.Log($"Disconnected events: {disconnectedEventCount}");
             Debug.Log($"Task announcements: {taskAnnouncementCount}");
             Debug.Log($"Bid messages: {bidMessageCount}");
             Debug.Log($"Evaluations: {evaluationCount}");
@@ -1062,6 +1095,7 @@ public class GameManager : MonoBehaviour
             Debug.Log($"Tasks needing reassignment: {tasksNeedingReassignment}");
             Debug.Log($"Successful reassignments: {successfulReassignments}");
             Debug.Log($"Failed reassignments: {failedReassignments}");
+            Debug.Log($"Reassignment success rate: {GetReassignmentSuccessRate():F2}");
             Debug.Log($"Average total task delay: {GetAverageTaskLifecycleTime():F2} s");
             Debug.Log($"Average auction-to-confirm delay: {GetAverageAuctionToConfirmDelay():F2} s");
             Debug.Log($"Average confirm-to-execution delay: {GetAverageConfirmToExecutionDelay():F2} s");
@@ -1135,8 +1169,10 @@ public class GameManager : MonoBehaviour
 
         currentTriggerReason = "AGENT_DISCONNECTED";
         agents[index].DisconnectTemporarily(disconnectionDuration);
+        disconnectedEventCount++;
 
         Debug.Log($"Agent {agents[index].agentId} temporarily disconnected.");
+        Debug.Log($"Disconnected event count: {disconnectedEventCount}");
     }
 
     // =========================
@@ -1267,5 +1303,20 @@ public class GameManager : MonoBehaviour
 
         if (count == 0) return 0f;
         return sum / count;
+    }
+
+    public string GetExperimentTypeString()
+    {
+        return experimentType.ToString();
+    }
+
+    public string GetExperimentNote()
+    {
+        return experimentNote;
+    }
+
+    public List<TaskPoint> GetAllTasks()
+    {
+        return tasks;
     }
 }

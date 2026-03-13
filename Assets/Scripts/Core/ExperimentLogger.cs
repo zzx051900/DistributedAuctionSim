@@ -47,7 +47,10 @@ public class ExperimentLogger : MonoBehaviour
         File.WriteAllText(
             summaryFilePath,
             "runId," +
-            "taskCount,completedTaskCount,completionRate,totalAssignmentCount,failedAgentCount,totalCompletionTime,fairnessIndex," +
+            "experimentType,experimentNote," +
+            "taskCount,completedTaskCount,completionRate,totalAssignmentCount," +
+            "failedAgentCount,disconnectedEventCount," +
+            "totalCompletionTime,fairnessIndex," +
             "totalConsensusSuccess,totalConsensusFail,totalReauctionCount," +
             "taskAnnouncementCount,bidMessageCount,evaluationCount,confirmMessageCount,reassignMessageCount,totalMessageCount," +
             "tasksNeedingReassignment,successfulReassignments,failedReassignments,reassignmentSuccessRate," +
@@ -91,9 +94,32 @@ public class ExperimentLogger : MonoBehaviour
         auctionRound = 0;
     }
 
+    int ResolveRunId(GameManager gm)
+    {
+        if (gm != null)
+        {
+            return gm.currentRunId;
+        }
+
+        return runId;
+    }
+
+    string EscapeCsv(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return "";
+
+        bool needQuotes = value.Contains(",") || value.Contains("\"") || value.Contains("\n") || value.Contains("\r");
+        string escaped = value.Replace("\"", "\"\"");
+
+        return needQuotes ? $"\"{escaped}\"" : escaped;
+    }
+
     public void LogSummary(GameManager gm)
     {
         if (gm == null) return;
+
+        int actualRunId = ResolveRunId(gm);
 
         string a0Type = (gm.agents != null && gm.agents.Length > 0 && gm.agents[0] != null)
             ? gm.agents[0].agentType.ToString() : "NONE";
@@ -109,13 +135,19 @@ public class ExperimentLogger : MonoBehaviour
         int a2Completed = (gm.agents != null && gm.agents.Length > 2 && gm.agents[2] != null)
             ? gm.agents[2].completedTaskCount : 0;
 
+        string experimentType = gm.GetExperimentTypeString();
+        string experimentNote = gm.GetExperimentNote();
+
         string line =
-            $"{runId}," +
+            $"{actualRunId}," +
+            $"{EscapeCsv(experimentType)}," +
+            $"{EscapeCsv(experimentNote)}," +
             $"{gm.totalTaskCount}," +
             $"{gm.completedTaskCount}," +
             $"{gm.GetCompletionRate():F4}," +
             $"{gm.totalAssignmentCount}," +
             $"{gm.failedAgentCount}," +
+            $"{gm.disconnectedEventCount}," +
             $"{gm.GetTotalCompletionTime():F4}," +
             $"{gm.GetFairnessIndex():F4}," +
             $"{gm.totalConsensusSuccess}," +
@@ -135,9 +167,9 @@ public class ExperimentLogger : MonoBehaviour
             $"{gm.GetAverageAuctionToConfirmDelay():F4}," +
             $"{gm.GetAverageConfirmToExecutionDelay():F4}," +
             $"{gm.GetAverageExecutionDuration():F4}," +
-            $"{a0Type},{a0Completed}," +
-            $"{a1Type},{a1Completed}," +
-            $"{a2Type},{a2Completed}\n";
+            $"{EscapeCsv(a0Type)},{a0Completed}," +
+            $"{EscapeCsv(a1Type)},{a1Completed}," +
+            $"{EscapeCsv(a2Type)},{a2Completed}\n";
 
         File.AppendAllText(summaryFilePath, line);
         Debug.Log("Summary exported.");
@@ -223,20 +255,20 @@ public class ExperimentLogger : MonoBehaviour
             $"{round}," +
             $"{time:F4}," +
             $"{taskId}," +
-            $"{safeTaskType}," +
+            $"{EscapeCsv(safeTaskType)}," +
             $"{riskLevel:F2}," +
             $"{urgencyText}," +
-            $"{safeTriggerReason}," +
-            $"{safeStage}," +
-            $"{safeAgent0State},{safeAgent0Bid}," +
-            $"{safeAgent1State},{safeAgent1Bid}," +
-            $"{safeAgent2State},{safeAgent2Bid}," +
+            $"{EscapeCsv(safeTriggerReason)}," +
+            $"{EscapeCsv(safeStage)}," +
+            $"{EscapeCsv(safeAgent0State)},{safeAgent0Bid}," +
+            $"{EscapeCsv(safeAgent1State)},{safeAgent1Bid}," +
+            $"{EscapeCsv(safeAgent2State)},{safeAgent2Bid}," +
             $"{proposedWinnerId}," +
             $"{confirmedWinnerId}," +
             $"{safeWinnerBid}," +
             $"{confirmCount}," +
             $"{requiredConfirmations}," +
-            $"{safeConsensusResult}," +
+            $"{EscapeCsv(safeConsensusResult)}," +
             $"{reauctionText}," +
             $"{hasBeenReassigned}," +
             $"{reassignCount}\n";
